@@ -7,5 +7,6 @@ namespace DapperApp.IRepository
     {
         Task<List<Employees>> GetEmployees();
         Task<string> Create(Employees employees);
+        Task<string> Update(Employees employees, int id);
     }
 }
