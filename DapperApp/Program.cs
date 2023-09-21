@@ -1,3 +1,4 @@
+using AutoMapper;
 using DapperApp;
 using DapperApp.IRepository;
 using DapperApp.Repository;
@@ -12,6 +13,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddTransient<DapperDbContext>();
 builder.Services.AddTransient<IEmployeesRepository, EmployeesRepository>();
+var automapper = new MapperConfiguration(item => item.AddProfile(new AutoMapperHandler()));
+IMapper mapper = automapper.CreateMapper();
+builder.Services.AddSingleton(mapper);
 string logpath = builder.Configuration.GetSection("Logging:LogPath").Value;
 var _logger = new LoggerConfiguration()
     .MinimumLevel.Debug()

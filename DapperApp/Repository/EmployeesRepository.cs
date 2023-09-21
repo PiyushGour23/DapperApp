@@ -1,4 +1,6 @@
-﻿using Dapper;
+﻿using AutoMapper;
+using Dapper;
+using DapperApp.DataModels;
 using DapperApp.IRepository;
 using DapperApp.Models;
 using Microsoft.Extensions.Configuration;
@@ -9,18 +11,21 @@ namespace DapperApp.Repository
     public class EmployeesRepository : IEmployeesRepository
     {
         private readonly DapperDbContext _dapperdbContext;
-        public EmployeesRepository(DapperDbContext dapperDbContext)
+        private readonly IMapper _mapper;
+        public EmployeesRepository(DapperDbContext dapperDbContext, IMapper mapper)
         {
-            _dapperdbContext = dapperDbContext ?? throw new ArgumentNullException(nameof(dapperDbContext)); 
+            _dapperdbContext = dapperDbContext ?? throw new ArgumentNullException(nameof(dapperDbContext));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
-        public async Task<List<Employees>> GetEmployees()
+        public async Task<List<EmployeesModel>> GetEmployees()
         {
             string sqlquery = "sp_getemployees";
             using (var db = _dapperdbContext.CreateConnection())
             {
                 var employee = await db.QueryAsync<Employees>(sqlquery, commandType:CommandType.StoredProcedure);
-                return employee.ToList();
+                var maptype = _mapper.Map<List<EmployeesModel>>(employee);
+                return maptype;
             }
         }
 
